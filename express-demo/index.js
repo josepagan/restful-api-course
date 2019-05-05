@@ -1,5 +1,6 @@
 /* jshint  esversion: 6 */ 
-
+//joi validation library returns class so better to capitalize
+const Joi = require('joi');
 const express = require('express');
 const app = express();
 
@@ -26,6 +27,19 @@ const course = courses.find(c => c.id === parseInt(req.params.id));
   res.send(course);
 });
 app.post('/api/courses', (req, res) => {
+  //schema to define joi validation requirement
+  const schema = {
+    name: Joi.string().min(3).required()
+  };
+  //validate requres req.body and schema and returns object to be stored
+  const result =  Joi.validate(req.body, schema);
+  console.log(result);
+  //never trust the customer! we need some validation:
+  if (!req.body.name || req.body.name.length < 3) {
+    //400 Bad Request:
+    res.status(400).send('Name is required and should be 3 characters');
+    return; //we dont want the rest of function to be executed
+  }
   //we need to create a new course object to inject it in the post reques
   const course = {
     id: courses.length + 1,
