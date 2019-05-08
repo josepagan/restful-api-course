@@ -38,11 +38,9 @@ app.get('/api/courses/:id', (req, res) => {
 });
 app.post('/api/courses', (req, res) => {
   
-  const {error} = validateCourse(request.body);
-  if (error) {
-    res.status(400).send(result.error.details[0].message);
-    return; //we dont want the rest of function to be executed
-  }
+  const {error} = validateCourse(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
+  
   //old validation
   //never trust the customer! we need some validation:
   // if (result.error) {
@@ -74,14 +72,11 @@ app.put('/api/courses/:id', (req,res)=>{
   //Look up the course
   const course = findCourse(req,res);
   //if course does not exist
-  if (!course) res.status(404).send('The course with the given ID was not found');
+  if (!course)  return res.status(404).send('The course with the given ID was not found');
   
 
   const {error} = validateCourse(req.body);
-  if (error) {
-    res.status(400).send(error.details[0].message);
-    return; //we dont want the rest of function to be executed
-  }
+  if (error) return res.status(400).send(error.details[0].message); 
 
     //modify course object
     course.name = req.body.name;
@@ -99,3 +94,26 @@ function validateCourse(course){
   return Joi.validate(course, schema);
 
 }
+
+app.delete('/api/courses/:id', (req,res)=>{
+  //look up the course
+  //
+  const course = findCourse(req,res);
+
+  //not existing return 404
+  if (!course)  return res.status(404).send('The course with the given ID was not found');
+  //
+  //delete
+  //to delete we have to find the index and then splice it off,
+  //my first idea of just update to  course=null is not probably very efficient
+
+  const index = courses.indexOf(course);
+  courses.splice(index,1);
+  res.send(course);
+
+
+  //
+  //return the same course
+
+}
+);
