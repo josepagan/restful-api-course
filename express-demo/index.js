@@ -1,11 +1,37 @@
 /* jshint  esversion: 6 */ 
-//joi validation library returns class so better to capitalize
+const config = require('config');
+const morgan = require('morgan');
+const helmet = require('helmet');
 const Joi = require('joi');
+const logger = require('./logger');
+const auth = require('./auth');
 const express = require('express');
 const app = express();
 
-app.use(express.json());
+//access to the enviroment variable, both methods give different results
+//app.get('env') defaults to dev if no enviroment set
+//
+console.log(`NODE_ENV: ${process.env.NODE_ENV}`);
+console.log(`app: ${app.get('env')}`);
 
+app.use(express.json());
+//allows to read url encoded data on the body
+app.use(express.urlencoded({extended: true}));
+//allows use of static sites
+app.use(express.static('public'));
+app.use(logger);
+app.use(auth);
+app.use(helmet());
+
+
+//configuration
+console.log(`Application Name: ${config.get('name')} `);
+console.log(`Mail Server:  ${config.get('mail.host')} `);
+
+if (app.get('env') === 'development') {
+  app.use(morgan('tiny'));
+  console.log('Morgan enabled...');
+}
 const courses = [
   {id: 1, name: 'course1'},
   {id: 2, name: 'course2'},
@@ -22,7 +48,7 @@ app.get('/api/courses', (req,res) => {
 
 const findCourse = (req,res) => {
   const course = courses.find(c => c.id === parseInt(req.params.id));
-  if (!course) res.status(404).send('The course with the given ID was not found');
+  if (!course) res.status(404).send('The coursewith the given ID was not found');
   else return course;
 };
 
