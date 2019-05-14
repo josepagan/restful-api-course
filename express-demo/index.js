@@ -1,4 +1,15 @@
 /* jshint  esversion: 6 */ 
+//debug require an arbitrary name-space for debuging
+//this name will be changed in the developemnt stage with:
+//export DEBUG=app:startup  or whatever the area we need
+//if we want different name spaces at the same time we use , to separate
+//or wildcard *
+//
+//instead of using export we can just set debug as we run app with 
+//$DEBUG=app:db nodemon index.js
+const startupDebugger = require('debug')('app:startup');
+const dbDebugger = require('debug')('app:db')
+
 const config = require('config');
 const morgan = require('morgan');
 const helmet = require('helmet');
@@ -7,6 +18,7 @@ const logger = require('./logger');
 const auth = require('./auth');
 const express = require('express');
 const app = express();
+app.set('view engine', 'pug');
 
 //access to the enviroment variable, both methods give different results
 //app.get('env') defaults to dev if no enviroment set
@@ -25,12 +37,16 @@ app.use(helmet());
 
 
 //configuration
+//uses the npm config and is setup at the config folder
+//from there we can stablish different environment elements and link to variables like passwords
+
 console.log(`Application Name: ${config.get('name')} `);
 console.log(`Mail Server:  ${config.get('mail.host')} `);
+// console.log(`Mail Password: ${config.get('mail.password')}`);
 
 if (app.get('env') === 'development') {
   app.use(morgan('tiny'));
-  console.log('Morgan enabled...');
+  startupDebugger('Morgan enabled...');
 }
 const courses = [
   {id: 1, name: 'course1'},
@@ -39,7 +55,7 @@ const courses = [
 ];
 
 app.get('/',(req,res)=>{
-  res.send('Hello World');
+  res.render('index',{title:'My Express App', message:'Hello'});
 });
 
 app.get('/api/courses', (req,res) => {
