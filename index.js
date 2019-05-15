@@ -1,9 +1,7 @@
 /* jshint  esversion: 6 */ 
 
-const Joi = require('joi');
 const express = require('express');
 const app = express();
-const uuidv1 = require('uuid/v1');
 const genres = require('./routes/genres');
 
 app.use(express.json());
