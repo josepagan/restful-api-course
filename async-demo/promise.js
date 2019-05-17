@@ -1,6 +1,5 @@
 /* jshint  esversion: 8 */                                                                                                    
 //anywhere where you have an asyncronous function that takes a call back we should modifyit to return a promise
-//
 
 //promise creation, it requires 2 parameters
 //once the promise is completed, if it is succesful it will return the resolve function, if failed it will resolve the rejectju1
