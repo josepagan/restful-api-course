@@ -94,3 +94,70 @@ async function getCourses(){
 
 //string will only pick the perfect match
 //we need regular expresions to 
+
+
+
+
+
+
+//updating documents  2 approaches
+  //Approach: Query first
+  //findById()
+  //Modify its properties
+  //save()
+  //
+async function updateCourse(id){
+
+const course = Course.findById(id); 
+  if (!course) return;
+  // course.isPublished = true;
+  // course.author = 'Another Author'
+  course.set({isPublished: true,
+  author: 'Another Author'})
+  const result = await course.save();
+  console.log(result)
+}
+updateCourse();
+
+
+async function updateCourse2(id){
+  const  result = await Course.update({_id:id},{
+    //mongodb update operators go here
+    $set:{
+      author: 'Mosh',
+      isPublished: false
+    }
+  });
+}
+
+//if we want to return the document directly
+
+
+async function updateCourse2(id){
+  //it will return an object
+  const  course = await Course.findByIdAndrUpdate({_id:id},{
+    //mongodb update operators go here
+    $set:{
+      author: 'Mosh',
+      isPublished: false
+    }
+    //that last object is necesary if we want to get the updated course and not the old one
+  },{new:true});
+  console.log(course);
+}
+
+
+
+
+async function removeCourse(id){
+  const result = await  Course.deleteOne({_id:id});
+  console.log(result)
+}
+
+
+async function removeCourse(id){
+  const result = await  Course.deleteMany({_id:id});
+  console.log(result)
+}
+
+
