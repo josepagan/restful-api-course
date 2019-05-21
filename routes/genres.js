@@ -13,11 +13,11 @@ const genreSchema = new mongoose.Schema({
   }
 });
 
-const Genre = new mongoose.Model('Genre', genreSchema);
+const Genre = mongoose.model('Genre', genreSchema);
 
 function validateGenre(body){
   const schema = {
-    name: Joi.string().alphanum().required()
+    name: Joi.string().alphanum().required().min(5).max(50)
   };
   return Joi.validate(body, schema);
 }
@@ -27,8 +27,15 @@ router.get('/', async (req,res) => {
   res.send(genres);
 });
 
+router.get('/:id', async (req,res) => {
+  const genre = await Genre.findById(req.params.id);
+  if (!genre) return res.status(404).send('THe genre with the given ID does not exist');
+  res.send(genre);
+});
 
 router.post('/', async (req,res)=> {
+  const {error} = validateGenre(req.body);
+  if (error) return res.status(400).send(error.details[0].message); 
   //we use variable first to define and save objet, then we store
   //the id returned by .save()
   let genre = new Genre({ name: req.body.name });
@@ -36,22 +43,22 @@ router.post('/', async (req,res)=> {
   res.send(genre);
 });
 
-router.put('/:id',(req,res)=>{
-
-  Genre.
-  const genreObj = genres.find(g => g.id === req.params.id);
+router.put('/:id',async (req,res)=>{
   const {error} = validateGenre(req.body);
   if (error) return res.status(400).send(error.details[0].message); 
-  else {
-    genreObj.name = req.body.name;
-    res.send(genreObj.name);
-  }
-});
 
-router.delete('/:id',(req,res)=>{
-  const i = genres.findIndex(g => g.id === req.params.id);
-  const genreName = genres[i].name;
-  genres.splice(i,1);
+  const genre = await Genre.findByIdAndUpdate(req.params.id, {name: req.body.name},{new: true});
+  if (!genre) return res.status(404).send('The genre with the given id does not exist');
+
+
+  res.send(genre);
+}
+);
+
+router.delete('/:id',async (req,res)=>{
+  const genre =   Genre.findByIdAndRemove(req.params.id);
+  if (!genre) return res.status(404).send('The genre with the given ID does not exist');
+
   res.send(`Genre ${genreName} deleted!`);
 
 });
