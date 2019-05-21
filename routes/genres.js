@@ -1,10 +1,19 @@
-/* jshint  esversion: 6 */ 
+/* jshint  esversion: 8 */ 
+const mongoose = require('mongoose');
 const express = require('express');
 const Joi = require('joi');
 const router = express.Router();
-const uuidv1 = require('uuid/v1');
 
-const genres = [];
+const genreSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+    minlength: 5,
+    maxlength:50
+  }
+});
+
+const Genre = new mongoose.Model('Genre', genreSchema);
 
 function validateGenre(body){
   const schema = {
@@ -13,21 +22,23 @@ function validateGenre(body){
   return Joi.validate(body, schema);
 }
 
-router.get('/', (req,res) => {
+router.get('/', async (req,res) => {
+  const genres = await Genre.find().sort('name').lean();
   res.send(genres);
 });
 
-router.post('/', (req,res)=> {
-  const genre = genres.find(genreObj=>genreObj.name === req.body.name);
-  const {error} = validateGenre(req.body);
-  if (genre) return res.send('The genre already exists');
-  else if (error) return res.status(400).send(error.details[0].message); 
-  else genres.push({id: uuidv1(),
-  name: req.body.name});
-  res.send('done');
+
+router.post('/', async (req,res)=> {
+  //we use variable first to define and save objet, then we store
+  //the id returned by .save()
+  let genre = new Genre({ name: req.body.name });
+  genre = await genre.save();
+  res.send(genre);
 });
 
 router.put('/:id',(req,res)=>{
+
+  Genre.
   const genreObj = genres.find(g => g.id === req.params.id);
   const {error} = validateGenre(req.body);
   if (error) return res.status(400).send(error.details[0].message); 
@@ -42,7 +53,7 @@ router.delete('/:id',(req,res)=>{
   const genreName = genres[i].name;
   genres.splice(i,1);
   res.send(`Genre ${genreName} deleted!`);
-  
+
 });
 
 module.exports = router;

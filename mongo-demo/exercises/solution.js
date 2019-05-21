@@ -22,12 +22,12 @@ const Course = mongoose.model('Course', courseSchema);
 //and display them
 
 async function getCourses1() {
-    const result = await Course
+  const result = await Course
     .find({ isPublished: true, tags: 'backend'  })
     .sort({ name: 1  })
     .select({ name: 1, author: 1  });
-    console.log(result);
-  
+  console.log(result);
+
 }
 
 //get all published front and backend courses
@@ -36,9 +36,9 @@ async function getCourses1() {
 //and display them
 async function getCourses2() {
   return await Course
-  .find({isPublished:true,tags: {$in: ['frontend','backend']}})
-  .sort({ price: -1 })
-  .select({ name: 1, author: 1 });
+    .find({isPublished:true,tags: {$in: ['frontend','backend']}})
+    .sort({ price: -1 })
+    .select({ name: 1, author: 1 });
 }
 
 //get all published courses that are $10 or more
@@ -46,7 +46,7 @@ async function getCourses2() {
 
 async function getCourses3() {
   return await Course
-  .find()
+    .find()
     .or([{price:{$gte:15}},{name: /.*by.*/i}]);
   // .sort({ price: -1 })
   // .select({ name: 1, author: 1 });

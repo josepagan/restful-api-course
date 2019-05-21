@@ -5,10 +5,24 @@
   <title>notes node course</title>
 </head>
 <body>
-  <h1>Patterns for dealing with asyncronous code</h1>
+  <h1>conecting mongoose with express</h1>
   <ul>
-    <li></li>
+    <li>we only need to connect with mongoose once at application level</li>
+    <li>where routes are...:<ul>
+        <li>require mongoose</li>
+        <li>create schema</li>
+        <li>create model</li>
+      </ul></li>
+      <li style="font-family:monospace">async (req,res) => {  <br> const query = await Model.find()<br>} </li>
+      <li>post requires a new object we get with new Model</li>
+      <li style="font-family:monospace ;text-indent: -2em">
+        router.post('/', async (req,res)=> {<br>
+    let genre = new Genre({ name: req.body.name });<br>
+    genre = await genre.save();<br>
+    res.send(genre);<br>
+  });
+</li>
   </ul>  
-    
+
 </body>
 </html>

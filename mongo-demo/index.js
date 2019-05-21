@@ -13,7 +13,8 @@ const courseSchema = new mongoose.Schema({
   tags: [String],
   date: {type: Date,
     default: Date.now },
-  isPublished: Boolean
+  isPublished: Boolean,
+  price: Number
 });
 
 //Schemas has to be compiled into a model
@@ -35,16 +36,16 @@ async function createCourse(){
   console.log(result);
 }
 
-createCourse();
+// createCourse();
 
 
 //how to query documents
 //this will return all courses found
 async function getAllCourses(){
-const courses = await Course.find();
-console.log(courses);
-}
-// getAllCourses().catch(error => console.error(error.stack));
+  const courses = await Course.find();//.lean().select({name: 1});
+    console.log(courses);
+  }
+getAllCourses();//.catch(error => console.error(error.stack));
 
 
 //callback style
@@ -117,7 +118,7 @@ const course = Course.findById(id);
   const result = await course.save();
   console.log(result)
 }
-updateCourse();
+// updateCourse();
 
 
 async function updateCourse2(id){
@@ -151,13 +152,17 @@ async function updateCourse2(id){
 
 async function removeCourse(id){
   const result = await  Course.deleteOne({_id:id});
-  console.log(result)
+  console.log(result);
 }
-
 
 async function removeCourse(id){
   const result = await  Course.deleteMany({_id:id});
-  console.log(result)
+  console.log(result);
 }
 
 
+//this will return the element removed
+async function removeCourse(id){
+  const course = await Course.findByIdAndRemove(id);
+  console.log(result);
+}
