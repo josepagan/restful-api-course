@@ -8,7 +8,7 @@ const genreSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
-    minlength: 5,
+    minlength: 3,
     maxlength:50
   }
 });
@@ -17,7 +17,7 @@ const Genre = mongoose.model('Genre', genreSchema);
 
 function validateGenre(body){
   const schema = {
-    name: Joi.string().alphanum().required().min(5).max(50)
+    name: Joi.string().alphanum().required().min(3).max(50)
   };
   return Joi.validate(body, schema);
 }
@@ -46,6 +46,7 @@ router.post('/', async (req,res)=> {
 router.put('/:id',async (req,res)=>{
   const {error} = validateGenre(req.body);
   if (error) return res.status(400).send(error.details[0].message); 
+ 
 
   const genre = await Genre.findByIdAndUpdate(req.params.id, {name: req.body.name},{new: true});
   if (!genre) return res.status(404).send('The genre with the given id does not exist');
@@ -56,10 +57,11 @@ router.put('/:id',async (req,res)=>{
 );
 
 router.delete('/:id',async (req,res)=>{
-  const genre =   Genre.findByIdAndRemove(req.params.id);
+  const genre = await  Genre.findByIdAndRemove(req.params.id);
   if (!genre) return res.status(404).send('The genre with the given ID does not exist');
+  console.log(genre);
 
-  res.send(`Genre ${genreName} deleted!`);
+  res.send(`Genre ${genre.name} deleted!`);
 
 });
 
