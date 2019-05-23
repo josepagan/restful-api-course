@@ -8,10 +8,11 @@
   <h1>conecting mongoose with express</h1>
   <ul>
     <li>we only need to connect with mongoose once at application level</li>
-    <li>where routes are...:<ul>
+    <li>we need to:<ul>
         <li>require mongoose</li>
         <li>create schema</li>
         <li>create model</li>
+        <li>all this can be started at /routes but later will need its proper folders</li>
       </ul></li>
       <li style="font-family:monospace">async (req,res) => {  <br> const query = await Model.find()<br>} </li>
       <li>post requires a new object we get with new Model</li>
