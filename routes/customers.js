@@ -27,8 +27,9 @@ function validateCustomer(body){
   const schema = {
     name: Joi.string().alphanum().required().min(3).max(50),
     isGold: Joi.boolean().required(),
-    phone: Joi.number().required().min(8).max(12)
+    phone: Joi.number().required()
   };
+  return Joi.validate(body,schema);
 }
 
 router.get('/',async (req,res) =>{
@@ -46,14 +47,27 @@ router.post('/', async (req,res)=> {
 const  {name, isGold, phone} = req.body;
   const {error} = validateCustomer(req.body);
   if (error) return res.status(400).send(error.details[0].message); 
-  //we use variable first to define and save objet, then we store
-  //the id returned by .save()
-  let customer = new Customer({name,isGold,phone});
-  customer = await genre.save();
+  let customer = new Customer({name, isGold, phone});//name, equals name:name...
+  customer = await customer.save();
   res.send(customer);
 });
 
+router.put('/:id', async (req, res) => {
+  const {name, isGold, phone} = req.body;
+  const {error} = validateCustomer(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
+  const customer = await Customer.findByIdAndUpdate(
+    req.params.id,
+    {name,isGold,phone},
+    {new:true});
+  res.send(customer);
+});
 
+router.delete('/:id', async (req, res) => {
+  const customer = await Customer.findByIdAndRemove(req.params.id);
+  if (!customer) res.status(404).send('The customer with the given ID does not exist');
+  res.send(`Customer ${customer.name} deleted!`);
+});
 
 
 module.exports = router;
