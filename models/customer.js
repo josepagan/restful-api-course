@@ -1,5 +1,6 @@
 /* jshint  esversion: 8 */ 
 
+import Joi from 'joi';
 import mongoose from 'mongoose';
 
 const customerSchema = new mongoose.Schema({
@@ -20,3 +21,15 @@ const customerSchema = new mongoose.Schema({
 });
 
 const Customer = mongoose.model('Customer', customerSchema);
+
+function validateCustomer(body){
+  const schema = {
+    name: Joi.string().alphanum().required().min(3).max(50),
+    isGold: Joi.boolean().required(),
+    phone: Joi.number().required()
+  };
+  return Joi.validate(body,schema);
+}
+
+exports.Customer = Customer;
+exports.validate = validateCustomer;

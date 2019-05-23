@@ -1,29 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>notes node course</title>
-</head>
-<body>
-  <h1>conecting mongoose with express</h1>
-  <ul>
-    <li>we only need to connect with mongoose once at application level</li>
-    <li>we need to:<ul>
-        <li>require mongoose</li>
-        <li>create schema</li>
-        <li>create model</li>
-        <li>all this can be started at /routes but later will need its proper folders</li>
-      </ul></li>
-      <li style="font-family:monospace">async (req,res) => {  <br> const query = await Model.find()<br>} </li>
-      <li>post requires a new object we get with new Model</li>
-      <li style="font-family:monospace ;text-indent: -2em">
-        router.post('/', async (req,res)=> {<br>
-    let genre = new Genre({ name: req.body.name });<br>
-    genre = await genre.save();<br>
-    res.send(genre);<br>
-  });
-</li>
-  </ul>  
+  <head>
+    <meta charset="UTF-8">
+    <title>notes node course</title>
+  </head>
+  <body>
+    <h1>conecting mongoose with express</h1>
+    <ul>
+      <li>we only need to connect with mongoose once at application level</li>
+      <li>we need to:<ul>
+          <li>require mongoose</li>
+          <li>create schema</li>
+          <li>create model</li>
+          <li>all this can be started at /routes but later will need its proper folders</li>
+        </ul></li>
+        <li style="font-family:monospace">async (req,res) => {  <br> const query = await Model.find()<br>} </li>
+        <li>post requires a new object we get with new Model</li>
+        <li style="font-family:monospace">
+          router.post('/', async (req,res)=> {<br>
+          let genre = new Genre({ name: req.body.name });<br>
+          genre = await genre.save();<br>
+          res.send(genre);<br>
+          });
+        </li>
+        <li>By the single responsability principle we should have one file for models and one for routes, the validation function should be with the model since it is related to the element</li>
+    </ul>  
+    <h1>Modeling Relationships</h1>
+    <ul>
+      <li>Two different approaches: <ul>
+          <li>Using references (normalization)<ul>
+              <li style="font-family:monospace">
+                let autor = {
+                name: "Jose"
+                }
+                <li style="font-family:monospace">
+                  let course = {
+                  author: 'id' 
+                  }
+                </li>
+            </ul></li>
+            <li>Using embedded documents (denormalization)<ul>
+                <li>
+                  let course ={
+                  author: {
+                  name: 'Mosh'
+                  }
+                  }
+                </li>
 
-</body>
+              </ul></li>
+        </ul></li>
+        <li>The performance depends of the type of app, normalization is not necesarily the fastest one</li>
+        <li>There is a tradeof between performance and consitency<ul>
+            <li>using references require to use extra queries, performance may take a hit</li></ul></li>
+        <li>using embedded documents consistency may fail as we need to update all embedded documents</li>
+        <li>we need to think ahead what sort of query our app will use</li>
+        <li>There is a third choice, hybrid, it is like embedded but we only include basic properties (like name) and then the id property</li>
+    </ul>
+
+
+  </body>
 </html>
