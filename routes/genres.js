@@ -1,5 +1,5 @@
 /* jshint  esversion: 8 */ 
-import { Genre, validateGenre } from '../models/genre';
+const { Genre, validateGenre } = require('../models/genre');
 const express = require('express');
 const router = express.Router();
 

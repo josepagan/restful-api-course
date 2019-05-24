@@ -1,7 +1,7 @@
 /* jshint  esversion: 8 */ 
 
-import Joi from 'joi';
-import mongoose from 'mongoose';
+const Joi = require('joi');
+const  mongoose = require('mongoose');
 
 const customerSchema = new mongoose.Schema({
   name:{
